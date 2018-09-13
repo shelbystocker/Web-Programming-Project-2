@@ -1,0 +1,84 @@
+Project #2 - Due Monday-February 26, 23:59:59pm
+
+Use Canvas and submit your JavaScript file as "Project #2".  
+Please name your file Lname.html, or Lname1Lname2.html if you 
+work in a group of two, and then zip it as the same name .zip.
+---------------------------------------------------------
+
+Note: You shall follow Dr. Finkel's checklist for good programming:
+http://www.cs.uky.edu/~raphael/checklist.html
+
+---------------------------------------------------------
+While utilizing your universal translator web application, 
+Xelkalai has discovered something not found on his home planet 
+of Xarnaco.  He has discovered anagrams:
+(https://en.wikipedia.org/wiki/Anagram).
+
+He has commissioned you to write a simple anagram game in 
+JavaScript.
+
+Requirements:
+
+    - You shall start with Xelkalai's starter code.  You shall 
+      maintain the data structure used to store the anagrams,
+      solutions, and hints.
+    - Your program shall work within the Chrome browser.
+
+Specifications:
+    - You shall produce a single HTML file with JavaScript.
+	- Your JavaScript will utilize addEventListener() and
+	  removeEventListener() to manage where the user clicks
+	  the mouse.  Elements should not be click-able when they
+	  should not be used.
+	- anagrams are only 3 characters long
+	- there is a single hint for each anagram
+	- there are only 2 anagrams for each scramble.  Note there
+	  will most likely be other anagrams.  Your program shall
+	  only accept the anagrams given.
+
+Logic:
+	- Present an HTML document with appropriate elements (and ids)
+	  that can be modified/updated via JavaScript.
+	- Display the available scrambles to solve to the user on the
+	  left side.
+	  - Update the 'info' element to ask the user to choose a 
+	    scramble to solve.
+      - Make the scrambles "click-able".
+    - Once a scramble is selected, turn off scrambles from future 
+	  clicks.
+	- Enumerate the scramble letters at the top on the right-hand 
+	  side.
+	- Allow the user to click one of the two anagrams to solve 
+      ('active1' or 'active2' elements);
+	- Now enable the scramble letters.  As the user clicks each one,
+	  update the appropriate 'gram1' or 'gram2' element.  If the 
+	  user selects "DEL" then remove the last letter added to the 
+	  anagram.  
+    - If the user clicks on 'hint1' or 'hint2', display the hint for
+	  that anagram.  Only the activated anagram's hint should be 
+	  click-able.
+	- Update the 'info' element with directions to the user at each
+	  step.
+	- Add a "Solved" element or button (your choice) for the user
+	  to click once they've filled in the two anagrams.  If they 
+	  click the Solved button/element, check the user's anagrams 
+	  against the stored values and denote correctness or 
+	  incorrectness appropriately.
+	- Once solved, allow the user to select from the remaining 
+      unsolved scrambles to solve.
+
+
+Hints:
+    - use console.log() to help debug your code.
+	- I strongly recommend use of git repository!
+	- You can use/declare global variables to keep state, make 
+	  sure to use correct scope.
+	- Start with the source code in
+	  Canvas->Files-Assignments->Project2->P2_starter.html
+	- Code each step of the game and test.  As each is working
+	  correctly, add the next step, repeat.
+
+Teams:
+    - You have the option of working in teams of 2.  Each team 
+	  member must contribute equally to the project.
+

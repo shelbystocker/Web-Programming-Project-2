@@ -1,0 +1,297 @@
+<!DOCTYPE>
+<!--
+	Name:    Jen Lee & Shelby Stocker
+	File:    LeeStocker.html
+	Version: 1.0
+	Date:    2018-Feb-20
+
+	Using the starting code for a javascript program given by Paul Linton.
+
+-->
+<HTML>
+<TITLE>X A R N G R A M</TITLE>
+<HEAD>
+<STYLE>
+
+</STYLE>
+
+<!-- not needed for assignment -->
+<!-- https://codereview.stackexchange.com/questions/132125/rot13-javascript -->
+<SCRIPT>
+//    scramble, 1st anagram, 1st hint, 2nd anagram, 2nd hint
+var xarngrams = [
+	[ 'ABCD', 'CAB', 'taxi', 'BAD', 'not good' ],
+	[ 'AEHKT', 'EAT', 'consume food', 'HAT', 'wear on your head' ],
+	[ 'EILMSU', 'ELM', 'type of tree', 'SUM', 'add two numbers' ],
+	[ 'DEINPTU', 'PET', 'household animal', 'TEN', 'nine plus one' ],
+	[ 'PJLINTON', 'OIL', 'texas tea', 'TOP', 'opposite of bottom' ],
+	];
+
+// golbal variables
+var whichSolution = undefined;
+var chosenAnagram = undefined;
+var letter = "";
+var answer = "";
+
+// this function simply outputs on console.log() if a user clicks on something
+// that is currently 'disabled'.
+function ignoreClick() {
+
+	console.log("User clicked on " + this.id + " and it was ignored.");
+
+}
+
+// function to reset website to original settings
+function reset() {
+	// reset table elements
+	document.getElementById('submit').removeEventListener("click", checkAnswers, false);
+	document.getElementById('gram1').innerHTML = 'XXX';
+        document.getElementById('gram2').innerHTML = 'XXX';     
+        document.getElementById('hint1').innerHTML = 'hint1';
+	document.getElementById('hint1').removeEventListener("click", showHint, false);
+        document.getElementById('hint2').innerHTML = 'hint2';
+	document.getElementById('hint2').removeEventListener("click", showHint, false);
+	document.getElementById('active1').style.background = 'none';
+	document.getElementById('active1').removeEventListener("click", activateSolution, false);
+	document.getElementById('active2').style.background = 'none';
+	document.getElementById('active2').removeEventListener("click", activateSolution, false);
+	document.getElementById('hint1').style.background = 'none';
+	document.getElementById('hint2').style.background = 'none';
+	// change all green boxes back to white and remove event listeners
+	for (i = 0; i < 8; i++) {
+                var which = 'a'+i;
+                document.getElementById(which).style.background = 'none';
+        	document.getElementById(which).removeEventListener("click", solveIt, false);
+	}
+	// make scrambles to left clickable
+	for (i = 1; i < xarngrams.length+1; i++) {
+		var which = "l"+i;
+                var lelement = document.getElementById(which);
+                //make scramble clickable -- call chooseScramble
+                lelement.addEventListener("click", chooseScramble, false);
+	}	
+}
+
+// functions to check answers once both are input
+function checkAnswers() {
+	for (i = 0; i < xarngrams.length; i++) {
+		if (xarngrams[i][0] == chosenAnagram) {
+			if (document.getElementById('gram1').innerHTML == xarngrams[i][1] && document.getElementById('gram2').innerHTML == xarngrams[i][3]) {
+				giveInstructions("CONGRATULATIONS! You did it! Click another anagram to start over.");				
+				reset();
+			}
+			// if they had the order switched
+			else if (document.getElementById('gram2').innerHTML == xarngrams[i][1] && document.getElementById('gram1').innerHTML == xarngrams[i][3]) {
+				giveInstructions("CONGRATULATIONS! You did it!");
+				reset();
+			}
+			else {
+				giveInstructions("Sorry, your answer is incorrect! Click a hint for help!");
+			}	
+		}
+	}
+}
+
+// function to solve the anagram
+function solveIt(str) { 
+	// set letter clicked on to green
+	console.log("User clicked on " + this.id);
+	letter = this.innerHTML;
+	console.log("Letter = " + letter);
+	this.style.background = 'green';
+	giveInstructions("Click a hint for help!");
+	// add letters clicked on to answer
+	if (answer.length < xarngrams[0][1].length) {
+		answer += letter;
+		if (whichSolution == 'active1') {
+			document.getElementById('gram1').innerHTML = answer;	
+		}
+		else if (whichSolution == 'active2') {
+			document.getElementById('gram2').innerHTML = answer;
+		}
+	}
+	
+	if (answer.length >=  xarngrams[0][1].length) {
+		if (answer.length > xarngrams[0][1].length)
+			giveInstructions("The answer is only 3 letters!");
+		// once first solution has 3 letters, make other activity clickable again
+		if (whichSolution == 'active1') {
+			document.getElementById('active2').addEventListener("click", activateSolution, false);
+		}
+		else if (whichSolution == 'active2') {
+			document.getElementById('active1').addEventListener("click", activateSolution, false);
+		}
+	}
+}
+
+// function to DEL a letter
+function removeLastLetter() {
+	answer = answer.substring(0, answer.length - 1);
+	if (whichSolution == 'active1') {
+		document.getElementById('gram1').innerHTML = answer;
+	}
+	else {
+		document.getElementById('gram2').innerHTML = answer;
+	}
+}
+
+// function to show a hint
+function showHint() {
+	console.log("User wants to see " + this.innerHTML);
+	//set background to green
+	this.style.background = 'green';
+	for (i = 0; i < xarngrams.length; i++) {
+		if (xarngrams[i][0] == chosenAnagram) {
+			if (this.id == 'hint1') {
+				document.getElementById('hint1').innerHTML = xarngrams[i][2];
+			}
+			if (this.id == 'hint2') {
+				document.getElementById('hint2').innerHTML = xarngrams[i][4];
+			}
+		}
+	}
+}
+
+// code to "turn on" a selected scramble.
+// str is the scrambled letters we use to form anagrams.
+function doScramble(str) {
+	// put a ' ' in each letter (ids a0 through a7)
+	for (i = 0; i < 8; i++) {
+                var which = 'a'+i;
+     		document.getElementById(which).innerHTML = ' ';
+       	}
+	// replace the spaces with each letter in 'str' 
+	for (i = 0; i < str.length; i++) {
+		var which = 'a'+i; 
+		document.getElementById(which).innerHTML = str[i];
+	}
+	// add the DEL element in the last one so players
+	//    can remove a selected letter
+	document.getElementById('a8').innerHTML = 'DEL';
+	// add event listening for each letter (and DEL)
+	for (i = 0; i < 8; i++) {
+		var which = 'a'+i;
+		letter = which.innerHTML;
+		document.getElementById(which).addEventListener("click", solveIt, false);
+	}
+	// make DEL and Solve! clickable
+	document.getElementById('a8').addEventListener("click", removeLastLetter, false);
+	document.getElementById('submit').addEventListener("click", checkAnswers, false);
+}
+
+
+// Turns the chosen anagram green and removes event listening 
+// for active1 and active2. Calls doScramble
+function activateSolution() {
+	console.log("User clicked on " + this.id);
+	// set global variable to this.id
+	whichSolution = this.id;
+	// set background color to green
+	this.style.background = 'green';
+	// 2) remove listeners for each activation element
+	if (whichSolution == 'active1') {
+		//remove click for 'active2' -- add click for 'hint1'
+                document.getElementById('active2').removeEventListener("click", activateSolution, false);
+		//document.getElementById('active2').addEventListener("click", ignoreClick, false);
+		document.getElementById('hint1').addEventListener("click", showHint, false);
+	}
+        else if (whichSolution == 'active2') {
+		//remove click for 'active1' -- add click for 'hint2'
+                document.getElementById('active1').removeEventListener("click", activateSolution, false);
+		//document.getElementById('active1').addEventListener("click", ignoreClick, false);
+		document.getElementById('hint2').addEventListener("click", showHint, false);	
+	}
+	// default answer back to ""
+	answer = "";
+	// once active1 or active2 is chosen, do scramble
+	doScramble(chosenAnagram);
+}
+
+// This function will be called when a user selects which anagram to solve.
+// There will be an object "this" that refers to the element that
+// was clicked on.
+function chooseScramble() {
+
+	console.log("They chose scramble id " + this.id + " which is " +
+	this.innerHTML);
+	// change font of chosen Anagram to green
+	this.style.color = 'green';
+	// set global to anagram chosen
+	chosenAnagram = this.innerHTML;
+	// turn "off" scrambles.  Should not be able to click on them
+	//    after selecting one.
+	for (i = 1; i < xarngrams.length+1; i++) {
+		var which = "l"+i;
+		var lelement = document.getElementById(which);
+		lelement.removeEventListener("click", chooseScramble, false);
+		lelement.addEventListener("click", ignoreClick, false);
+	}
+	// turn "on" the two solutions to work on by setting a click
+	//    listener for each activeX id.
+	giveInstructions("Click on anagram 1 or 2 to solve!");
+	document.getElementById('active1').addEventListener("click",
+	activateSolution, false);
+	document.getElementById('active2').addEventListener("click",
+	activateSolution, false);
+}
+
+
+// sets the information element for user instructions.
+function giveInstructions(str) {
+	document.getElementById('info').innerHTML = str;
+}
+
+// Loads in xarngrams to left hand side
+function load() {
+
+	// iterates through scrambles
+	for (i = 1; i < xarngrams.length+1; i++) {
+		var which = "l"+i;
+		var lelement = document.getElementById(which);
+		lelement.innerHTML = xarngrams[i-1][0];
+		//make scramble clickable -- call chooseScramble
+		lelement.addEventListener("click", chooseScramble, false);
+	}
+
+	giveInstructions("Click on a scramble on the left to start!");
+
+}
+
+</SCRIPT>
+</HEAD>
+
+<BODY ONLOAD="load()">
+<h1 align='center'>Welcome to X A R N G R A M</h1>
+
+<TABLE id='wholescreen' width=100%>
+<TR>
+	<TD>
+		<TABLE id='leftside' width=50%>
+			<TR><TD id="l1">placeholder</TD></TR>
+			<TR><TD id="l2">placeholder</TD></TR>
+			<TR><TD id="l3">placeholder</TD></TR>
+			<TR><TD id="l4">placeholder</TD></TR>
+			<TR><TD id="l5">placeholder</TD></TR>
+		</TABLE>
+	</TD>
+	<TD>
+		<TABLE id='letters' width=50% border=2>
+				<TH id='a0'>A</TH><TH id='a1'>B</TH><TH id='a2'>C</TH>
+				<TH id='a3'>D</TH><TH id='a4'>E</TH><TH id='a5'>F</TH>
+				<TH id='a6'>G</TH><TH id='a7'>H</TH><TH id='a8'>DEL</TH>
+		</TABLE>
+		<P>
+		<TABLE id='grams' width=50% border=2>
+			<TR><TD id='active1' width=10%>anagram1</TD><TD id='gram1' width=15%>XXX</TD><TD
+			id='hint1' width=75%>hint1</TD></TR>
+			<TR><TD id='active2' width=10%>anagram2</TD><TD id='gram2'>XXX</TD><TD id='hint2'>hint2</TD></TR>
+			<TR></TR>
+		</TABLE>
+		</P>
+	</TD>
+</TR>
+</TABLE>
+<P id='info'>User instructions here!</P>
+<input type = 'submit' id = 'submit' value = 'SOLVE!'>
+</BODY>
+</HTML>
